@@ -1,5 +1,5 @@
 import { apiRequest } from "./client";
-import type { ArticlesResponse, ArticleResponse } from "../types";
+import type { ArticlesResponse, ArticleResponse, CreateArticleInput } from "../types";
 
 export const listArticles = (limit = 10, offset = 0, tag?: string) =>
   apiRequest<ArticlesResponse>(
@@ -16,3 +16,9 @@ export const getArticle = (slug: string) =>
 
 export const deleteArticle = (slug: string) =>
   apiRequest<void>(`/articles/${slug}`, { method: "DELETE" });
+
+export const createArticle = (data: CreateArticleInput) =>
+  apiRequest<ArticleResponse>(`/articles`, {
+    method: "POST",
+    body: JSON.stringify({ article: data }),
+  });

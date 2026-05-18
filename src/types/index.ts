@@ -49,6 +49,13 @@ export type PaginationProps = {
   onPageChange: (page: number) => void;
 };
 
+export type CreateArticleInput = {
+  title:string
+  description:string
+  body:string
+  tagList:string[]
+}
+
 export type UserResponse = { user: User };
 export type ProfileResponse = { profile: Profile };
 export type ArticleResponse = { article: Article };
