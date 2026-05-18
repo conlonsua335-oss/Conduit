@@ -1,42 +1,49 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { loginApi, parseApiError } from "../api/auth";
-import { useAuth } from "../context/useAuth";
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { loginApi, parseApiError } from "../api/auth"
+import { useAuth } from "../context/useAuth"
+import AuthForm from "../components/form/AuthForm"
+import { loginFields } from "../components/form/authFields"
 
 function LoginPage() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
+  const navigate = useNavigate()
+  const { login } = useAuth()
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  })
+
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async () => {
-    setError("");
+    setError("")
 
-    if (!email || !password) {
-      setError("Vui lòng nhập đầy đủ thông tin.");
-      return;
+    if (!form.email || !form.password) {
+      setError("Vui lòng nhập đầy đủ thông tin.")
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const res = await loginApi(email, password);
-      login(res.user.token, res.user);
-      navigate("/");
+      const res = await loginApi(form.email, form.password)
+      login(res.user.token, res.user)
+      navigate("/")
     } catch (err: unknown) {
-      console.log("Lỗi:", err);
-      setError(parseApiError(err));
+      setError(parseApiError(err))
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="max-w-md mx-auto mt-16 px-4">
-      <h1 className="text-3xl font-bold text-center mb-2">Sign in</h1>
+      <h1 className="text-3xl font-bold text-center mb-2">
+        Sign in
+      </h1>
+
       <p className="text-center mb-6">
         <Link to="/register" className="text-green-500 hover:underline">
           Need an account?
@@ -49,31 +56,16 @@ function LoginPage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-3 w-full"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border border-gray-300 rounded px-4 py-3 w-full"
-        />
-        <button
-          onClick={handleSubmit}
-          disabled={isLoading}
-          className="bg-green-500 text-white px-6 py-3 rounded text-lg self-end hover:bg-green-600 disabled:opacity-50"
-        >
-          {isLoading ? "Đang xử lý..." : "Sign in"}
-        </button>
-      </div>
+      <AuthForm
+        fields={loginFields}
+        form={form}
+        setForm={setForm}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        buttonText="Sign in"
+      />
     </div>
-  );
+  )
 }
 
-export default LoginPage;
+export default LoginPage

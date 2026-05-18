@@ -1,3 +1,5 @@
+import type React from "react";
+
 export type User = {
   email: string;
   token: string;
@@ -54,6 +56,18 @@ export type CreateArticleInput = {
   description:string
   body:string
   tagList:string[]
+}
+
+export type FieldProps = {
+  placeholder: string;
+  type: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export type ButtonProps = {
+  isLoading: boolean;
+  text: string;
 }
 
 export type UserResponse = { user: User };
