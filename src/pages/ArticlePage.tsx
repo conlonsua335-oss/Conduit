@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getArticle, deleteArticle } from "../api/articles";
 import { useAuth } from "../context/useAuth";
 import type { Article } from "../types";
+import ReactMarkdown from "react-markdown";
 
 function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -127,9 +128,9 @@ function ArticlePage() {
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 py-10">
-        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap mb-8">
-          {article.body}
-        </p>
+        <div className="prose max-w-none mb-8">
+          <ReactMarkdown>{article.body}</ReactMarkdown>
+        </div>
 
         {/* Tags */}
         <div className="flex gap-2 flex-wrap mb-8">
