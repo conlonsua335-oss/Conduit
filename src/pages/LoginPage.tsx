@@ -28,7 +28,6 @@ function LoginPage() {
       navigate("/");
     } catch (err: unknown) {
       console.log("Lỗi:", err);
-
       setError(parseApiError(err));
     } finally {
       setIsLoading(false);

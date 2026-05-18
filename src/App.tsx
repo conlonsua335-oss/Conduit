@@ -11,7 +11,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
@@ -25,7 +24,6 @@ function App() {
         <Route path="/editor/:slug" element={<ProtectedRoute><EditorPage /></ProtectedRoute>} />
       </Route>
     </Routes>
-
   );
 }
 

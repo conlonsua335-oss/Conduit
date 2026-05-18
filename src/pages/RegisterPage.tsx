@@ -25,7 +25,6 @@ function RegisterPage() {
       navigate("/login");
     } catch (err: unknown) {
       console.log("Lỗi:", err);
-
       setError(parseApiError(err));
     } finally {
       setIsLoading(false);
