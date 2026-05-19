@@ -79,6 +79,11 @@ export type CommentCardProps = {
   comment: Comment;
 }
 
+export type AddCommentProps = {
+  slug:string
+  onCommentAdded: (comment: Comment) => void;
+}
+
 export type UserResponse = { user: User };
 export type ProfileResponse = { profile: Profile };
 export type ArticleResponse = { article: Article };

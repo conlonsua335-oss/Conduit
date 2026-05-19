@@ -1,5 +1,5 @@
 import { apiRequest } from "./client";
-import type { ArticlesResponse, ArticleResponse, CreateArticleInput, ProfileResponse, CommentsResponse } from "../types";
+import type { ArticlesResponse, ArticleResponse, CreateArticleInput, ProfileResponse, CommentsResponse, CommentResponse } from "../types";
 
 
 export const listArticles = (limit = 10, offset = 0, tag?: string) =>
@@ -38,3 +38,9 @@ export const unfollowUser = (username: string) =>
 
 export const getComment = (slug :string ) => 
   apiRequest<CommentsResponse>(`/articles/${slug}/comments`)
+
+export const addComment = (slug:string, body:string) =>
+  apiRequest<CommentResponse>(`/articles/${slug}/comments`,{
+    method:"POST",
+    body:JSON.stringify({comment:{body}})
+  })

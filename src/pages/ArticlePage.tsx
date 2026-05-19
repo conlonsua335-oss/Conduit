@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import FollowButton from "../components/FollowButton";
 import type { Comment } from "../types";
 import CommentCard from "../components/CommentCard";
+import AddComment from "../components/AddComments";
 
 function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -80,6 +81,10 @@ function ArticlePage() {
       setIsDeleting(false);
     }
   };
+
+  const handleCommentAdded = (comment: Comment) => {
+    setComments((prev) => [comment, ...prev]);
+  }
 
   if (isLoading) {
     return (
@@ -179,6 +184,8 @@ function ArticlePage() {
         <div className="max-w-2xl mx-auto mt-8">
           <h3 className="text-lg font-medium text-gray-700 mb-4">Comments</h3>
 
+          {/**Form thêm comment**/}
+          <AddComment slug={article.slug} onCommentAdded={handleCommentAdded} />
           {isCommentsLoading ? (
             <p className="text-gray-400">Loading comments...</p>
           ) : comments.length === 0 ? (
