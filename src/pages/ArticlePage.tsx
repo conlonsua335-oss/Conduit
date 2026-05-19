@@ -4,6 +4,7 @@ import { getArticle, deleteArticle } from "../api/articles";
 import { useAuth } from "../context/useAuth";
 import type { Article } from "../types";
 import ReactMarkdown from "react-markdown";
+import FollowButton from "../components/FollowButton";
 
 function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -164,6 +165,8 @@ function ArticlePage() {
             </p>
           </div>
         </div>
+
+        <FollowButton username={article.author.username} following={article.author.following} />
       </div>
     </div>
   );

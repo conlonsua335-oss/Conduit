@@ -1,5 +1,5 @@
 import { apiRequest } from "./client";
-import type { ArticlesResponse, ArticleResponse, CreateArticleInput } from "../types";
+import type { ArticlesResponse, ArticleResponse, CreateArticleInput, ProfileResponse } from "../types";
 
 export const listArticles = (limit = 10, offset = 0, tag?: string) =>
   apiRequest<ArticlesResponse>(
@@ -28,3 +28,9 @@ export const updateArticle = (slug:string, data:CreateArticleInput) =>
     method:"PUT",
     body:JSON.stringify({article:data})
   })
+
+export const followUser = (username: string) =>
+  apiRequest<ProfileResponse>(`/profiles/${username}/follow`, { method: "POST" });  
+
+export const unfollowUser = (username: string) =>
+  apiRequest<ProfileResponse>(`/profiles/${username}/follow`, { method: "DELETE" });  

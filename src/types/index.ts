@@ -70,6 +70,11 @@ export type ButtonProps = {
   text: string;
 }
 
+export type FollowButtonProps = {
+  username:string
+  following:boolean
+}
+
 export type UserResponse = { user: User };
 export type ProfileResponse = { profile: Profile };
 export type ArticleResponse = { article: Article };
