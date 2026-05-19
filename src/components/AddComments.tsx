@@ -6,7 +6,7 @@ import type { AddCommentProps } from "../types";
 
 
 
-function AddComment({ slug, onCommentAdded }: AddCommentProps) {
+function AddComment({ slug, onCommentAdded, }: AddCommentProps) {
     const { user } = useAuth();
     const [body, setBody] = useState("");
     const [isLoading, setIsLoading] = useState(false);

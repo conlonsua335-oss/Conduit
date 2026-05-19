@@ -44,3 +44,8 @@ export const addComment = (slug:string, body:string) =>
     method:"POST",
     body:JSON.stringify({comment:{body}})
   })
+
+ export const deleteComment = (slug:string, commentId:number) =>
+  apiRequest<void>(`/articles/${slug}/comments/${commentId}`,{
+    method:"DELETE"
+  }) 

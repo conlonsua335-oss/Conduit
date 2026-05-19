@@ -86,6 +86,10 @@ function ArticlePage() {
     setComments((prev) => [comment, ...prev]);
   }
 
+  const handleCommentDeleted = (commentId: number) => {
+    setComments((prev) => prev.filter(c => c.id !== commentId));
+  }
+
   if (isLoading) {
     return (
       <p className="text-center text-gray-400 mt-20">Loading article...</p>
@@ -193,7 +197,12 @@ function ArticlePage() {
           ) : (
             comments.map((comment) => (
               <div key={comment.id} className="mb-4">
-                <CommentCard comment={comment} />
+                <CommentCard
+                  comment={comment}
+                  key={comment.id}
+                  slug={article.slug}
+                  onDeleted={handleCommentDeleted}
+                />
               </div>
             ))
           )}

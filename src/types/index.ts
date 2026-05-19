@@ -52,10 +52,10 @@ export type PaginationProps = {
 };
 
 export type CreateArticleInput = {
-  title:string
-  description:string
-  body:string
-  tagList:string[]
+  title: string
+  description: string
+  body: string
+  tagList: string[]
 }
 
 export type FieldProps = {
@@ -71,16 +71,18 @@ export type ButtonProps = {
 }
 
 export type FollowButtonProps = {
-  username:string
-  following:boolean
+  username: string
+  following: boolean
 }
 
 export type CommentCardProps = {
   comment: Comment;
+  slug: string;
+  onDeleted: (commentId: number) => void;
 }
 
 export type AddCommentProps = {
-  slug:string
+  slug: string
   onCommentAdded: (comment: Comment) => void;
 }
 
