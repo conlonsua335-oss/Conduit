@@ -22,3 +22,9 @@ export const createArticle = (data: CreateArticleInput) =>
     method: "POST",
     body: JSON.stringify({ article: data }),
   });
+
+export const updateArticle = (slug:string, data: CreateArticleInput) =>
+  apiRequest<ArticleResponse>(`/articles/${slug}`, {
+    method: "PUT",
+    body: JSON.stringify({ article: data }),
+  });
