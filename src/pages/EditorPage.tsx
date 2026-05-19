@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createArticle } from "../api/articles";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { createArticle, getArticle, updateArticle } from "../api/articles";
 
 function EditorPage() {
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug?: string }>();
+  const isEditing = Boolean(slug); // có slug = đang edit, không có = đang tạo mới
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -12,42 +14,69 @@ function EditorPage() {
   const [tagList, setTagList] = useState<string[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(isEditing); // đang fetch bài cũ
+
+  // Nếu đang edit → fetch bài cũ về prefill form
+  useEffect(() => {
+    if (!slug) return;
+
+    let cancelled = false;
+
+    const fetchArticle = async () => {
+      try {
+        const res = await getArticle(slug);
+        if (!cancelled) {
+          setTitle(res.article.title);
+          setDescription(res.article.description);
+          setBody(res.article.body);
+          setTagList(res.article.tagList);
+          setIsFetching(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Article not found.");
+          setIsFetching(false);
+        }
+      }
+    };
+
+    fetchArticle();
+    return () => { cancelled = true; };
+  }, [slug]);
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log("key pressed:", e.key);
     if (e.key === "Enter") {
       e.preventDefault();
-      // logic
-      const tag = tagInput.trim()
-      console.log("tag sẽ thêm:", tag);
+      const tag = tagInput.trim();
       if (tag && !tagList.includes(tag)) {
-        setTagList((prev) => [...prev, tag])
+        setTagList((prev) => [...prev, tag]);
       }
-      setTagInput("")
+      setTagInput("");
     }
-  }
+  };
 
   const handleRemoveTag = (tag: string) => {
-    setTagList((prev) => prev.filter(t => t !== tag))
-  }
+    setTagList((prev) => prev.filter((t) => t !== tag));
+  };
 
   const handleSubmit = async () => {
     setError("");
 
     if (!title.trim()) {
       setError("Title cannot be empty.");
-      return
+      return;
     }
     if (!body.trim()) {
       setError("Body cannot be empty.");
-      return
+      return;
     }
-
-    console.log("Data gửi lên", { title, description, body, tagList });
 
     setIsLoading(true);
     try {
-      const res = await createArticle({ title, description, body, tagList });
+      const data = { title, description, body, tagList };
+      const res = isEditing
+        ? await updateArticle(slug!, data)   // edit → PUT
+        : await createArticle(data);          // tạo mới → POST
       navigate(`/article/${res.article.slug}`);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -55,6 +84,10 @@ function EditorPage() {
       setIsLoading(false);
     }
   };
+
+  if (isFetching) {
+    return <p className="text-center text-gray-400 mt-20">Loading article...</p>;
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
@@ -80,7 +113,7 @@ function EditorPage() {
           className="border border-gray-300 rounded px-4 py-3 w-full"
         />
         <textarea
-          placeholder="Write your article"
+          placeholder="Write your article (in markdown)"
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={12}
@@ -94,7 +127,7 @@ function EditorPage() {
             placeholder="Enter tags — press Enter to add"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
-            onKeyUp={handleAddTag}
+            onKeyDown={handleAddTag}
             className="w-full outline-none"
           />
           {tagList.length > 0 && (
@@ -123,11 +156,15 @@ function EditorPage() {
             disabled={isLoading}
             className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 disabled:opacity-50"
           >
-            {isLoading ? "Publishing..." : "Publish Article"}
+            {isLoading
+              ? (isEditing ? "Updating..." : "Publishing...")
+              : (isEditing ? "Update Article" : "Publish Article")
+            }
           </button>
         </div>
       </div>
     </div>
   );
 }
+
 export default EditorPage;
