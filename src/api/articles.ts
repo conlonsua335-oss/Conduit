@@ -1,5 +1,6 @@
 import { apiRequest } from "./client";
-import type { ArticlesResponse, ArticleResponse, CreateArticleInput, ProfileResponse } from "../types";
+import type { ArticlesResponse, ArticleResponse, CreateArticleInput, ProfileResponse, CommentsResponse } from "../types";
+
 
 export const listArticles = (limit = 10, offset = 0, tag?: string) =>
   apiRequest<ArticlesResponse>(
@@ -34,3 +35,6 @@ export const followUser = (username: string) =>
 
 export const unfollowUser = (username: string) =>
   apiRequest<ProfileResponse>(`/profiles/${username}/follow`, { method: "DELETE" });  
+
+export const getComment = (slug :string ) => 
+  apiRequest<CommentsResponse>(`/articles/${slug}/comments`)

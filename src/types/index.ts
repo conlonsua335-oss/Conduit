@@ -75,6 +75,10 @@ export type FollowButtonProps = {
   following:boolean
 }
 
+export type CommentCardProps = {
+  comment: Comment;
+}
+
 export type UserResponse = { user: User };
 export type ProfileResponse = { profile: Profile };
 export type ArticleResponse = { article: Article };

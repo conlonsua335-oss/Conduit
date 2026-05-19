@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getArticle, deleteArticle } from "../api/articles";
+import { getArticle, deleteArticle, getComment } from "../api/articles";
 import { useAuth } from "../context/useAuth";
 import type { Article } from "../types";
 import ReactMarkdown from "react-markdown";
 import FollowButton from "../components/FollowButton";
+import type { Comment } from "../types";
+import CommentCard from "../components/CommentCard";
 
 function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -15,6 +17,9 @@ function ArticlePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(true);
 
   useEffect(() => {
     if (!slug) return;
@@ -38,6 +43,28 @@ function ArticlePage() {
 
     fetchArticle();
 
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  useEffect(() => {
+    if (!slug) return;
+
+    let cancelled = false;
+
+    const fetchComments = async () => {
+      try {
+        const res = await getComment(slug);
+        if (!cancelled) {
+          setComments(res.comments);
+          setIsCommentsLoading(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setIsCommentsLoading(false);
+        }
+      }
+    }
+    fetchComments();
     return () => { cancelled = true; };
   }, [slug]);
 
@@ -146,6 +173,24 @@ function ArticlePage() {
         </div>
 
         <hr className="border-gray-200 mb-8" />
+
+        {/**comments section**/}
+
+        <div className="max-w-2xl mx-auto mt-8">
+          <h3 className="text-lg font-medium text-gray-700 mb-4">Comments</h3>
+
+          {isCommentsLoading ? (
+            <p className="text-gray-400">Loading comments...</p>
+          ) : comments.length === 0 ? (
+            <p className="text-gray-400">No comments yet.</p>
+          ) : (
+            comments.map((comment) => (
+              <div key={comment.id} className="mb-4">
+                <CommentCard comment={comment} />
+              </div>
+            ))
+          )}
+        </div>
 
         {/* Author info bottom */}
         <div className="flex justify-center">
