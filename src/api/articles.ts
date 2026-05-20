@@ -2,9 +2,15 @@ import { apiRequest } from "./client";
 import type { ArticlesResponse, ArticleResponse, CreateArticleInput, ProfileResponse, CommentsResponse, CommentResponse } from "../types";
 
 
-export const listArticles = (limit = 10, offset = 0, tag?: string) =>
+export const listArticles = (
+  limit = 10,
+  offset = 0,
+  tag?: string,
+  author?: string,
+  favorited?: string
+) =>
   apiRequest<ArticlesResponse>(
-    `/articles?limit=${limit}&offset=${offset}${tag ? `&tag=${tag}` : ""}`
+    `/articles?limit=${limit}&offset=${offset}${tag ? `&tag=${tag}` : ""}${author ? `&author=${author}` : ""}${favorited ? `&favorited=${favorited}` : ""}`
   );
 
 export const feedArticles = (limit = 10, offset = 0) =>
@@ -49,3 +55,6 @@ export const addComment = (slug:string, body:string) =>
   apiRequest<void>(`/articles/${slug}/comments/${commentId}`,{
     method:"DELETE"
   }) 
+
+  export const getProfile = (username:string) =>
+    apiRequest<ProfileResponse>(`/profiles/${username}`) 
