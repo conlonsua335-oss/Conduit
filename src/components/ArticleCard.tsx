@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Article } from "../types";
+import { formatDate } from "../types/formatDate";
 
 function ArticleCard({ article }: { article: Article }) {
     return (
@@ -28,11 +29,7 @@ function ArticleCard({ article }: { article: Article }) {
                             {article.author.username}
                         </Link>
                         <span className="text-gray-400 text-xs">
-                            {new Date(article.createdAt).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                            })}
+                            {formatDate(article.createdAt)}
                         </span>
                     </div>
                 </div>

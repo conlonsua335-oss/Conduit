@@ -3,6 +3,7 @@ import type { CommentCardProps } from "../types";
 import { useState } from "react";
 import { useAuth } from "../context/useAuth";
 import { deleteComment } from "../api/articles";
+import { formatDate } from "../types/formatDate";
 
 
 
@@ -52,11 +53,7 @@ function CommentCard({ comment, slug, onDeleted }: CommentCardProps) {
                     {comment.author.username}
                 </Link>
                 <span className="text-gray-400 text-xs">
-                    {new Date(comment.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                    })}
+                    {formatDate(comment.createdAt)}
                 </span>
             </div>
 

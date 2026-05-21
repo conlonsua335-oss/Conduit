@@ -9,6 +9,7 @@ import type { Comment } from "../types";
 import CommentCard from "../components/CommentCard";
 import AddComment from "../components/AddComments";
 import Loading from "../components/Loading";
+import { formatDate } from "../types/formatDate";
 
 function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -220,11 +221,7 @@ function ArticlePage() {
               {article.author.username}
             </Link>
             <p className="text-gray-400 text-xs mt-1">
-              {new Date(article.createdAt).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              {formatDate(article.createdAt)}
             </p>
           </div>
         </div>
