@@ -78,7 +78,8 @@ function EditorPage() {
         ? await updateArticle(slug!, data)   // edit → PUT
         : await createArticle(data);          // tạo mới → POST
       navigate(`/article/${res.article.slug}`);
-    } catch {
+    } catch (err) {
+      console.log("lỗi update", err)
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
