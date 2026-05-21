@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { parseApiError, registerApi } from "../api/auth";
 import { registerFields } from "../components/form/authFields";
 import AuthForm from "../components/form/AuthForm";
-import ErrorMessage from "../components/ErrorMessage";
 function RegisterPage() {
   const navigate = useNavigate();
 
@@ -45,7 +44,11 @@ function RegisterPage() {
         </Link>
       </p>
 
-      <ErrorMessage message={error} />
+      {error && (
+        <div className="bg-red-100 text-red-600 px-4 py-3 rounded mb-4 text-sm">
+          {error}
+        </div>
+      )}
 
       <AuthForm
         fields={registerFields}

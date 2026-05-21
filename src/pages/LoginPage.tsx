@@ -4,7 +4,6 @@ import { loginApi, parseApiError } from "../api/auth"
 import { useAuth } from "../context/useAuth"
 import AuthForm from "../components/form/AuthForm"
 import { loginFields } from "../components/form/authFields"
-import ErrorMessage from "../components/ErrorMessage"
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -51,7 +50,11 @@ function LoginPage() {
         </Link>
       </p>
 
-      <ErrorMessage message={error} />
+      {error && (
+        <div className="bg-red-100 text-red-600 px-4 py-3 rounded mb-4 text-sm">
+          {error}
+        </div>
+      )}
 
       <AuthForm
         fields={loginFields}

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateUserApi } from "../api/auth";
 import { useAuth } from "../context/useAuth";
-import ErrorMessage from "../components/ErrorMessage";
 
 function SettingsPage() {
   const navigate = useNavigate();
@@ -61,7 +60,11 @@ function SettingsPage() {
     <div className="max-w-lg mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold text-center mb-8">Your Settings</h1>
 
-      <ErrorMessage message={error} />
+      {error && (
+        <div className="bg-red-100 text-red-600 px-4 py-3 rounded mb-4 text-sm">
+          {error}
+        </div>
+      )}
 
       {success && (
         <div className="bg-green-100 text-green-600 px-4 py-3 rounded mb-4 text-sm">

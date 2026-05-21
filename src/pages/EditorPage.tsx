@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createArticle, getArticle, updateArticle } from "../api/articles";
-import ErrorMessage from "../components/ErrorMessage";
 
 function EditorPage() {
   const navigate = useNavigate();
@@ -92,7 +91,11 @@ function EditorPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
-      <ErrorMessage message={error} />
+      {error && (
+        <div className="bg-red-100 text-red-600 px-4 py-3 rounded mb-4 text-sm">
+          {error}
+        </div>
+      )}
 
       <div className="flex flex-col gap-4">
         <input
