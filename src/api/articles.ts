@@ -31,7 +31,7 @@ export const createArticle = (data: CreateArticleInput) =>
   });
 
 export const updateArticle = (slug:string, data:CreateArticleInput) => 
-  apiRequest<ArticleResponse>(`/article/${slug}`,{
+  apiRequest<ArticleResponse>(`/articles/${slug}`,{
     method:"PUT",
     body:JSON.stringify({article:data})
   })
