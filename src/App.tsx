@@ -8,6 +8,7 @@ import EditorPage from "./pages/EditorPage";
 import ArticlePage from "./pages/ArticlePage";
 import ProfilePage from "./pages/ProfilePage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="/editor" element={<ProtectedRoute><EditorPage /></ProtectedRoute>} />
         <Route path="/editor/:slug" element={<ProtectedRoute><EditorPage /></ProtectedRoute>} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );
