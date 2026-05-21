@@ -114,7 +114,7 @@ function ArticlePage() {
         <div className="max-w-5xl mx-auto px-4">
           <h1 className="text-4xl font-bold mb-6">{article.title}</h1>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap justify-between">
               {article.author.image ? (
                 <img
                   src={article.author.image}

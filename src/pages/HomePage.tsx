@@ -90,7 +90,7 @@ function HomePage() {
         <p className="text-xl">A place to share your knowledge.</p>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex gap-6 flex-col md:flex-row">
         {/* Article List */}
         <div className="flex-1">
           {/* Tabs */}

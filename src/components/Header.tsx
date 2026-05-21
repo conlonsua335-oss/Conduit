@@ -17,7 +17,7 @@ function Header() {
           conduit
         </Link>
 
-        <ul className="flex gap-6">
+        <ul className="flex gap-4 flex-wrap">
           <li>
             <Link to="/" className="text-gray-600 hover:text-gray-900">
               Home
