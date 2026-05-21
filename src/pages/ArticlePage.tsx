@@ -8,6 +8,7 @@ import FollowButton from "../components/FollowButton";
 import type { Comment } from "../types";
 import CommentCard from "../components/CommentCard";
 import AddComment from "../components/AddComments";
+import FavoriteButton from "../components/FavoriteButton";
 
 function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -227,7 +228,17 @@ function ArticlePage() {
           </div>
         </div>
 
-        <FollowButton username={article.author.username} following={article.author.following} />
+        <div className="flex items-center gap-3 mt-4">
+          <FollowButton
+            username={article.author.username}
+            following={article.author.following}
+          />
+          <FavoriteButton
+            slug={article.slug}
+            favorited={article.favorited}
+            favoritesCount={article.favoritesCount}
+          />
+        </div>
       </div>
     </div>
   );

@@ -58,3 +58,13 @@ export const addComment = (slug:string, body:string) =>
 
   export const getProfile = (username:string) =>
     apiRequest<ProfileResponse>(`/profiles/${username}`) 
+
+  export const favoriteArticle = (slug:string) =>
+    apiRequest<ArticleResponse>(`/articles/${slug}/favorite`, {
+      method:"POST"
+    })
+
+  export const unfavoriteArticle = (slug:string) =>
+    apiRequest<ArticleResponse>(`/articles/${slug}/favorite`, {
+      method:"DELETE"
+    })  

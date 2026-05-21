@@ -86,6 +86,13 @@ export type AddCommentProps = {
   onCommentAdded: (comment: Comment) => void;
 }
 
+export type FavoriteButtonProps = {
+  slug :string
+  favorited :boolean
+  favoritesCount :number
+  onToggle?: (favorited: boolean, count: number) => void;
+}
+
 export type UserResponse = { user: User };
 export type ProfileResponse = { profile: Profile };
 export type ArticleResponse = { article: Article };
