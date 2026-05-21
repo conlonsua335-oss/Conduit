@@ -102,7 +102,7 @@ function HomePage() {
                   : "text-gray-500 hover:text-gray-900"
                   }`}
               >
-                Your Feed
+                My Feed
               </button>
             )}
             <button
