@@ -94,6 +94,8 @@ export type UpdateUserInput = {
   bio?: string;
 };
 
+export type Props = { message: string };
+
 export type UserResponse = { user: User };
 export type ProfileResponse = { profile: Profile };
 export type ArticleResponse = { article: Article };

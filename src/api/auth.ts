@@ -20,15 +20,29 @@ export const registerApi = (username:string,email:string, password:string) => {
 }
 
 export function parseApiError(err: unknown): string {
-  const apiErr = err as { data: { errors: Record<string, string | string[]> } };
-  return Object.entries(apiErr.data.errors)
-    .map(([field, errs]) => {
-      if (Array.isArray(errs)) {
-        return `${field} ${errs.join(", ")}`;
-      }
-      return `${field} ${errs}`;
-    })
-    .join(". ");
+  try {
+    const apiErr = err as { 
+      status: number; 
+      data: { errors: Record<string, string | string[]> } 
+    };
+
+    if (apiErr.status === 401) return "You must be logged in to do this.";
+    if (apiErr.status === 404) return "Resource not found.";
+    if (apiErr.status === 422 && apiErr.data?.errors) {
+      return Object.entries(apiErr.data.errors)
+        .map(([field, errs]) => {
+          if (Array.isArray(errs)) return `${field} ${errs.join(", ")}`;
+          return `${field} ${errs}`;
+        })
+        .join(". ");
+    }
+    if (err instanceof TypeError) {
+      return "Network error. Please check your connection.";
+    }
+    return "Something went wrong. Please try again.";
+  } catch {
+    return "Something went wrong. Please try again.";
+  }
 }
 
 export const updateUserApi = (data:UpdateUserInput) => 
