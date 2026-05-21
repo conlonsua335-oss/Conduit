@@ -1,4 +1,4 @@
-import type { UserResponse } from "../types"
+import type { UpdateUserInput, UserResponse } from "../types"
 import { apiRequest } from "./client"
 
 export const getCurrentUserApi = () => {
@@ -30,3 +30,9 @@ export function parseApiError(err: unknown): string {
     })
     .join(". ");
 }
+
+export const updateUserApi = (data:UpdateUserInput) => 
+    apiRequest<UserResponse>("/user", {
+        method: "PUT",
+        body:JSON.stringify({user:data})
+    })

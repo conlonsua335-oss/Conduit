@@ -7,6 +7,7 @@ export type AuthState = {
     isLoading: boolean
     login: (token:string,user:User) => void
     logout: () => void
+    setUser : (user: User | null) => void
 }
 
 export const AuthContext = createContext<AuthState | null>(null)

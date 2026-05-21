@@ -86,6 +86,14 @@ export type AddCommentProps = {
   onCommentAdded: (comment: Comment) => void;
 }
 
+export type UpdateUserInput = {
+  email?: string;
+  username?: string;
+  password?: string;
+  image?: string;
+  bio?: string;
+};
+
 export type UserResponse = { user: User };
 export type ProfileResponse = { profile: Profile };
 export type ArticleResponse = { article: Article };
