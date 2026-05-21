@@ -37,12 +37,13 @@ function ArticleCard({ article }: { article: Article }) {
                         </span>
                     </div>
                 </div>
+
+                {/* Thay button cũ bằng FavoriteButton */}
                 <FavoriteButton
                     slug={article.slug}
                     favorited={article.favorited}
                     favoritesCount={article.favoritesCount}
                 />
-
             </div>
 
             <Link to={`/article/${article.slug}`}>
