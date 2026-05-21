@@ -7,6 +7,7 @@ import FollowButton from "../components/FollowButton";
 import ArticleCard from "../components/ArticleCard";
 import Pagination from "../components/Pagination";
 import type { Profile, Article } from "../types";
+import Loading from "../components/Loading";
 
 const PAGE_SIZE = 10;
 type TabType = "my" | "favorited";
@@ -151,9 +152,7 @@ function ProfilePage() {
         </div>
 
         {/* Article List */}
-        {isLoadingArticles && (
-          <p className="text-gray-400 text-center py-10">Loading articles...</p>
-        )}
+        {isLoadingArticles && <Loading />}
 
         {!isLoadingArticles && articles.length === 0 && (
           <p className="text-gray-400 text-center py-10">

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createArticle, getArticle, updateArticle } from "../api/articles";
 import ErrorMessage from "../components/ErrorMessage";
+import Loading from "../components/Loading";
 
 function EditorPage() {
   const navigate = useNavigate();
@@ -153,7 +154,7 @@ function EditorPage() {
             disabled={isLoading}
             className="bg-green-500 text-white px-6 py-3 rounded hover:bg-green-600 disabled:opacity-50"
           >
-            {isLoading
+            {isLoading && <Loading />
               ? (isEditing ? "Updating..." : "Publishing...")
               : (isEditing ? "Update Article" : "Publish Article")
             }

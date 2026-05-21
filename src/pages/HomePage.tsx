@@ -6,6 +6,7 @@ import ArticleCard from "../components/ArticleCard";
 import TagList from "../components/TagList";
 import Pagination from "../components/Pagination";
 import type { Article } from "../types";
+import Loading from "../components/Loading";
 
 const PAGE_SIZE = 10;
 type FeedType = "global" | "your";
@@ -121,11 +122,7 @@ function HomePage() {
             )}
           </div>
 
-          {isLoadingArticles && (
-            <p className="text-gray-400 text-center py-10">
-              Loading articles...
-            </p>
-          )}
+          {isLoadingArticles && <Loading />}
 
           {!isLoadingArticles && articles.length === 0 && (
             <p className="text-gray-400 text-center py-10">

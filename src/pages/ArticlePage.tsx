@@ -8,6 +8,7 @@ import FollowButton from "../components/FollowButton";
 import type { Comment } from "../types";
 import CommentCard from "../components/CommentCard";
 import AddComment from "../components/AddComments";
+import Loading from "../components/Loading";
 
 function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -20,6 +21,7 @@ function ArticlePage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [comments, setComments] = useState<Comment[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
 
   useEffect(() => {
@@ -190,7 +192,7 @@ function ArticlePage() {
 
           {/**Form thêm comment**/}
           <AddComment slug={article.slug} onCommentAdded={handleCommentAdded} />
-          {isCommentsLoading ? (
+          {(isLoading && <Loading />) ? (
             <p className="text-gray-400">Loading comments...</p>
           ) : comments.length === 0 ? (
             <p className="text-gray-400">No comments yet.</p>
