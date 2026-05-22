@@ -5,7 +5,7 @@ import type { User } from "../types";
 
 
 function readToken(): string | null {
-  return localStorage.getItem("token");
+  return sessionStorage.getItem("token");
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -46,12 +46,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token]);
 
   const login = useCallback((token: string, user: User) => {
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("token", token);
     setUser(user);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setUser(null);
   }, []);
 

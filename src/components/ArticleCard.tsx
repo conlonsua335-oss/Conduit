@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import type { Article } from "../types";
 // import FavoriteButton from "./FavoriteButton";
 import { formatDate } from "../types/formatDate";
+import FavoriteButton from "./FavoriteButton";
 
 function ArticleCard({ article }: { article: Article }) {
     return (
@@ -53,11 +54,11 @@ function ArticleCard({ article }: { article: Article }) {
                         </span>
                     ))}
                 </div>
-                {/* <FavoriteButton
+                <FavoriteButton
                     slug={article.slug}
                     favorited={article.favorited}
                     favoritesCount={article.favoritesCount}
-                /> */}
+                />
             </div>
         </div>
     );

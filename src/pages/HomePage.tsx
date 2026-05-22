@@ -24,6 +24,8 @@ function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [feedType, setFeedType] = useState<FeedType>("global");
 
+  const [showAllTags, setShowAlltags] = useState(false)
+
   const totalPages = Math.ceil(articlesCount / PAGE_SIZE);
 
   useEffect(() => {
@@ -38,10 +40,10 @@ function HomePage() {
 
     const fetch = async () => {
       try {
-        const offset = (currentPage - 1) * PAGE_SIZE;
+        // const offset = (currentPage - 1) * PAGE_SIZE;
         const res = feedType === "your"
-          ? await feedArticles(PAGE_SIZE, offset)
-          : await listArticles(PAGE_SIZE, offset, selectedTag ?? undefined);
+          ? await feedArticles(PAGE_SIZE, currentPage)
+          : await listArticles(PAGE_SIZE, currentPage, selectedTag ?? undefined);
         if (!cancelled) {
           setArticles(res.articles);
           setArticlesCount(res.articlesCount);
@@ -137,20 +139,28 @@ function HomePage() {
           {isLoadingTags ? (
             <p className="text-gray-400 text-sm">Loading...</p>
           ) : (
-            <div className="flex flex-wrap gap-2">
-              {tags.slice(0, 15).map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => handleTagClick(tag)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTag === tag
-                    ? "bg-gray-900 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                >
-                  {tag}
+            <>
+              <div className="flex flex-wrap gap-2">
+                {(showAllTags ? tags : tags.slice(0, 20)).map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => handleTagClick(tag)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTag === tag
+                      ? "bg-gray-900 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+              {tags.length > 20 && (
+                <button onClick={() => setShowAlltags(prev => !prev)} className="text-sm text-green-600 mt-3 hover:underline">
+                  {showAllTags ? "Show less" : "Show more"}
                 </button>
-              ))}
-            </div>
+              )}
+            </>
+
           )}
         </div>
 

@@ -4,13 +4,13 @@ import type { ArticlesResponse, ArticleResponse, CreateArticleInput, ProfileResp
 
 export const listArticles = (
   limit = 10,
-  offset = 0,
+  page = 1,
   tag?: string,
   author?: string,
   favorited?: string
 ) =>
   apiRequest<ArticlesResponse>(
-    `/articles?limit=${limit}&offset=${offset}${tag ? `&tag=${tag}` : ""}${author ? `&author=${author}` : ""}${favorited ? `&favorited=${favorited}` : ""}`
+    `/articles?limit=${limit}&page=${page}${tag ? `&tag=${tag}` : ""}${author ? `&author=${author}` : ""}${favorited ? `&favorited=${favorited}` : ""}`
   );
 
 export const feedArticles = (limit = 10, offset = 0) =>
@@ -41,6 +41,16 @@ export const followUser = (username: string) =>
 
 export const unfollowUser = (username: string) =>
   apiRequest<ProfileResponse>(`/profiles/${username}/follow`, { method: "DELETE" });  
+
+export const favoriteArticle = (slug: string) =>
+  apiRequest<ArticleResponse>(`/articles/${slug}/favorite`, {
+    method: "POST",
+  });
+
+export const unfavoriteArticle = (slug: string) =>
+  apiRequest<ArticleResponse>(`/articles/${slug}/favorite`, {
+    method: "DELETE",
+  });
 
 export const getComment = (slug :string ) => 
   apiRequest<CommentsResponse>(`/articles/${slug}/comments`)
