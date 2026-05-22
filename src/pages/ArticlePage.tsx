@@ -20,16 +20,12 @@ function ArticlePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-
   const [comments, setComments] = useState<Comment[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
 
   useEffect(() => {
     if (!slug) return;
-
     let cancelled = false;
-
     const fetchArticle = async () => {
       try {
         const res = await getArticle(slug);
@@ -44,17 +40,13 @@ function ArticlePage() {
         }
       }
     };
-
     fetchArticle();
-
     return () => { cancelled = true; };
   }, [slug]);
 
   useEffect(() => {
     if (!slug) return;
-
     let cancelled = false;
-
     const fetchComments = async () => {
       try {
         const res = await getComment(slug);
@@ -63,11 +55,9 @@ function ArticlePage() {
           setIsCommentsLoading(false);
         }
       } catch {
-        if (!cancelled) {
-          setIsCommentsLoading(false);
-        }
+        if (!cancelled) setIsCommentsLoading(false);
       }
-    }
+    };
     fetchComments();
     return () => { cancelled = true; };
   }, [slug]);
@@ -75,7 +65,6 @@ function ArticlePage() {
   const handleDelete = async () => {
     if (!slug) return;
     if (!confirm("Are you sure you want to delete this article?")) return;
-
     setIsDeleting(true);
     try {
       await deleteArticle(slug);
@@ -87,146 +76,143 @@ function ArticlePage() {
 
   const handleCommentAdded = (comment: Comment) => {
     setComments((prev) => [comment, ...prev]);
-  }
+  };
 
   const handleCommentDeleted = (commentId: number) => {
-    setComments((prev) => prev.filter(c => c.id !== commentId));
-  }
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
+  };
 
-  if (isLoading) {
-    return (
-      <p className="text-center text-gray-400 mt-20">Loading article...</p>
-    );
-  }
+  if (isLoading) return <Loading />;
 
   if (error || !article) {
     return (
-      <p className="text-center text-red-500 mt-20">{error || "Article not found."}</p>
+      <p className="text-center text-red-500 mt-20">
+        {error || "Article not found."}
+      </p>
     );
   }
 
   const isOwner = user?.username === article.author.username;
+  const thumbnailUrl = `https://picsum.photos/seed/${article.slug}/1200/600`;
 
   return (
-    <div>
-      {/* Banner */}
-      <div className="bg-gray-800 text-white py-10">
-        <div className="max-w-5xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-6">{article.title}</h1>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-wrap justify-between">
-              {article.author.image ? (
-                <img
-                  src={article.author.image}
-                  alt={article.author.username}
-                  className="w-10 h-10 rounded-full"
-                  onError={(e) => { e.currentTarget.style.display = "none"; }}
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center font-bold">
-                  {article.author.username[0].toUpperCase()}
-                </div>
-              )}
-              <div>
-                <Link
-                  to={`/profile/${article.author.username}`}
-                  className="text-green-400 hover:underline font-medium"
-                >
-                  {article.author.username}
-                </Link>
-                <p className="text-gray-400 text-xs">
-                  {new Date(article.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-              </div>
-            </div>
+    <div className="max-w-3xl mx-auto px-4 py-10">
 
-            {/* Action buttons — chỉ hiện với owner */}
-            {isOwner && (
-              <div className="flex gap-2">
-                <Link
-                  to={`/editor/${article.slug}`}
-                  className="border border-gray-400 text-gray-300 px-3 py-1 rounded text-sm hover:bg-gray-700"
-                >
-                  Edit Article
-                </Link>
-                <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="border border-red-400 text-red-400 px-3 py-1 rounded text-sm hover:bg-red-400 hover:text-white disabled:opacity-50"
-                >
-                  {isDeleting ? "Deleting..." : "Delete Article"}
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      {/* Title */}
+      <h1 className="text-4xl font-bold text-gray-900 leading-tight mb-4">
+        {article.title}
+      </h1>
 
-      {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <div className="prose max-w-none mb-8">
-          <ReactMarkdown>{article.body}</ReactMarkdown>
-        </div>
+      {/* Description */}
+      {article.description && (
+        <p className="text-xl text-gray-500 mb-6">{article.description}</p>
+      )}
 
-        {/* Tags */}
-        <div className="flex gap-2 flex-wrap mb-8">
-          {article.tagList.map((tag) => (
-            <span
-              key={tag}
-              className="border border-gray-300 text-gray-400 text-sm px-3 py-1 rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        <hr className="border-gray-200 mb-8" />
-
-        {/**comments section**/}
-
-        <div className="max-w-2xl mx-auto mt-8">
-          <h3 className="text-lg font-medium text-gray-700 mb-4">Comments</h3>
-
-          {/**Form thêm comment**/}
-          <AddComment slug={article.slug} onCommentAdded={handleCommentAdded} />
-          {(isLoading && <Loading />) ? (
-            <p className="text-gray-400">Loading comments...</p>
-          ) : comments.length === 0 ? (
-            <p className="text-gray-400">No comments yet.</p>
+      {/* Author row */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          {article.author.image ? (
+            <img
+              src={article.author.image}
+              alt={article.author.username}
+              className="w-10 h-10 rounded-full object-cover"
+              onError={(e) => { e.currentTarget.style.display = "none"; }}
+            />
           ) : (
-            comments.map((comment) => (
-              <div key={comment.id} className="mb-4">
-                <CommentCard
-                  comment={comment}
-                  key={comment.id}
-                  slug={article.slug}
-                  onDeleted={handleCommentDeleted}
-                />
-              </div>
-            ))
+            <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">
+              {article.author.username[0].toUpperCase()}
+            </div>
           )}
-        </div>
-
-        {/* Author info bottom */}
-        <div className="flex justify-center">
-          <div className="text-center">
-            <Link
-              to={`/profile/${article.author.username}`}
-              className="text-green-500 hover:underline font-medium"
-            >
-              {article.author.username}
-            </Link>
-            <p className="text-gray-400 text-xs mt-1">
+          <div>
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/profile/${article.author.username}`}
+                className="font-medium text-gray-900 hover:underline"
+              >
+                {article.author.username}
+              </Link>
+              <FollowButton
+                username={article.author.username}
+                following={article.author.following}
+              />
+            </div>
+            <p className="text-sm text-gray-400">
               {formatDate(article.createdAt)}
             </p>
           </div>
         </div>
 
-        <FollowButton username={article.author.username} following={article.author.following} />
+        {/* Owner actions */}
+        {isOwner && (
+          <div className="flex gap-2">
+            <Link
+              to={`/editor/${article.slug}`}
+              className="border border-gray-300 text-gray-600 px-3 py-1 rounded text-sm hover:bg-gray-100"
+            >
+              Edit
+            </Link>
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="border border-red-400 text-red-400 px-3 py-1 rounded text-sm hover:bg-red-400 hover:text-white disabled:opacity-50"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Thumbnail */}
+      <div className="mb-8 rounded-lg overflow-hidden">
+        <img
+          src={thumbnailUrl}
+          alt={article.title}
+          className="w-full h-72 object-cover"
+        />
+      </div>
+
+      {/* Body */}
+      <div className="prose prose-lg max-w-none mb-8">
+        <ReactMarkdown>{article.body}</ReactMarkdown>
+      </div>
+
+      {/* Tags */}
+      {article.tagList.length > 0 && (
+        <div className="flex gap-2 flex-wrap mb-10">
+          {article.tagList.map((tag) => (
+            <span
+              key={tag}
+              className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <hr className="border-gray-200 mb-10" />
+
+      {/* Comments */}
+      <div className="mb-10">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Comments</h3>
+        <AddComment slug={article.slug} onCommentAdded={handleCommentAdded} />
+
+        {isCommentsLoading ? (
+          <Loading />
+        ) : comments.length === 0 ? (
+          <p className="text-gray-400 text-sm mt-4">No comments yet.</p>
+        ) : (
+          <div className="mt-4 flex flex-col gap-4">
+            {comments.map((comment) => (
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                slug={article.slug}
+                onDeleted={handleCommentDeleted}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
