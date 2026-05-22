@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/useAuth";
 import { favoriteArticle, unfavoriteArticle } from "../api/articles";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
     slug: string;
@@ -10,6 +11,7 @@ type Props = {
 
 function FavoriteButton({ slug, favorited, favoritesCount }: Props) {
     const { user } = useAuth();
+    const navigate = useNavigate()
     const [isFavorited, setIsFavorited] = useState(favorited);
     const [count, setCount] = useState(favoritesCount);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +20,10 @@ function FavoriteButton({ slug, favorited, favoritesCount }: Props) {
         e.preventDefault();
         e.stopPropagation();
 
-        if (!user) return;
+        if (!user) {
+            navigate("/login")
+            return
+        }
         if (isLoading) return;
 
         setIsLoading(true);
@@ -42,10 +47,10 @@ function FavoriteButton({ slug, favorited, favoritesCount }: Props) {
     return (
         <button
             onClick={handleClick}
-            disabled={isLoading || !user}
+            disabled={isLoading}
             className={`flex items-center gap-1 border px-3 py-1 rounded text-sm transition-colors ${isFavorited
-                    ? "bg-green-500 border-green-500 text-white"
-                    : "border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
+                ? "bg-green-500 border-green-500 text-white"
+                : "border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
             <svg
