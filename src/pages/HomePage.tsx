@@ -3,10 +3,9 @@ import { listArticles, feedArticles } from "../api/articles";
 import { getTags } from "../api/tags";
 import { useAuth } from "../context/useAuth";
 import ArticleCard from "../components/ArticleCard";
-import TagList from "../components/TagList";
 import Pagination from "../components/Pagination";
-import type { Article } from "../types";
 import Loading from "../components/Loading";
+import type { Article } from "../types";
 
 const PAGE_SIZE = 10;
 type FeedType = "global" | "your";
@@ -27,32 +26,28 @@ function HomePage() {
 
   const totalPages = Math.ceil(articlesCount / PAGE_SIZE);
 
-  // Fetch tags 1 lần khi load
   useEffect(() => {
     getTags()
       .then((res) => setTags(res.tags))
-      .catch((err) => console.error(err))
+      .catch(console.error)
       .finally(() => setIsLoadingTags(false));
   }, []);
 
-  // Fetch articles khi feedType, selectedTag, currentPage thay đổi
   useEffect(() => {
     let cancelled = false;
 
-    const fetchArticles = async () => {
+    const fetch = async () => {
       try {
         const offset = (currentPage - 1) * PAGE_SIZE;
         const res = feedType === "your"
           ? await feedArticles(PAGE_SIZE, offset)
           : await listArticles(PAGE_SIZE, offset, selectedTag ?? undefined);
-
         if (!cancelled) {
           setArticles(res.articles);
           setArticlesCount(res.articlesCount);
           setIsLoadingArticles(false);
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
         if (!cancelled) setIsLoadingArticles(false);
       }
     };
@@ -60,8 +55,7 @@ function HomePage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setArticles([]);
     setIsLoadingArticles(true);
-    fetchArticles();
-
+    fetch();
     return () => { cancelled = true; };
   }, [feedType, selectedTag, currentPage]);
 
@@ -71,11 +65,6 @@ function HomePage() {
     setCurrentPage(1);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo(0, 0);
-  };
-
   const handleFeedChange = (type: FeedType) => {
     setFeedType(type);
     setSelectedTag(null);
@@ -83,75 +72,103 @@ function HomePage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
-      {/* Banner */}
-      <div className="bg-green-500 text-white text-center py-10 mb-8 rounded">
-        <h1 className="text-4xl font-bold mb-2">conduit</h1>
-        <p className="text-xl">A place to share your knowledge.</p>
-      </div>
-
-      <div className="flex gap-6 flex-col md:flex-row">
-        {/* Article List */}
-        <div className="flex-1">
-          {/* Tabs */}
-          <div className="flex border-b border-gray-200 mb-4">
-            {user && (
-              <button
-                onClick={() => handleFeedChange("your")}
-                className={`pb-2 px-4 text-sm ${feedType === "your" && !selectedTag
-                  ? "border-b-2 border-green-500 text-green-500"
-                  : "text-gray-500 hover:text-gray-900"
-                  }`}
-              >
-                Your Feed
-              </button>
-            )}
+    <div className="flex gap-12">
+      {/* Article Feed */}
+      <div className="flex-1 min-w-0">
+        {/* Tabs */}
+        <div className="flex gap-6 border-b border-gray-200 mb-6">
+          {user && (
             <button
-              onClick={() => handleFeedChange("global")}
-              className={`pb-2 px-4 text-sm ${feedType === "global" && !selectedTag
-                ? "border-b-2 border-green-500 text-green-500"
-                : "text-gray-500 hover:text-gray-900"
+              onClick={() => handleFeedChange("your")}
+              className={`pb-3 text-sm font-medium border-b-2 transition-colors ${feedType === "your" && !selectedTag
+                ? "border-gray-900 text-gray-900"
+                : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
             >
-              Global Feed
+              For you
             </button>
-            {selectedTag && (
-              <span className="border-b-2 border-green-500 text-green-500 pb-2 px-4 text-sm">
-                # {selectedTag}
-              </span>
-            )}
-          </div>
-
-          {isLoadingArticles && <Loading />}
-
-          {!isLoadingArticles && articles.length === 0 && (
-            <p className="text-gray-400 text-center py-10">
-              No articles are here... yet.
-            </p>
           )}
-
-          {!isLoadingArticles &&
-            articles.map((article) => (
-              <ArticleCard key={article.slug} article={article} />
-            ))}
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          <button
+            onClick={() => handleFeedChange("global")}
+            className={`pb-3 text-sm font-medium border-b-2 transition-colors ${feedType === "global" && !selectedTag
+              ? "border-gray-900 text-gray-900"
+              : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+          >
+            Featured
+          </button>
+          {selectedTag && (
+            <span className="pb-3 text-sm font-medium border-b-2 border-green-600 text-green-600">
+              #{selectedTag}
+            </span>
+          )}
         </div>
 
-        {/* Sidebar */}
-        <div className="w-56 flex-shrink-0">
-          <TagList
-            tags={tags}
-            selectedTag={selectedTag}
-            isLoading={isLoadingTags}
-            onTagClick={handleTagClick}
-          />
-        </div>
+        {/* Articles */}
+        {isLoadingArticles && <Loading />}
+
+        {!isLoadingArticles && articles.length === 0 && (
+          <p className="text-gray-400 text-center py-20">
+            No articles are here... yet.
+          </p>
+        )}
+
+        {!isLoadingArticles && articles.map((article) => (
+          <ArticleCard key={article.slug} article={article} />
+        ))}
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            window.scrollTo(0, 0);
+          }}
+        />
       </div>
+
+      {/* Right Sidebar */}
+      <aside className="hidden xl:block w-72 shrink-0">
+        {/* Recommended Topics */}
+        <div className="mb-8">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">
+            Recommended topics
+          </h3>
+          {isLoadingTags ? (
+            <p className="text-gray-400 text-sm">Loading...</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {tags.slice(0, 15).map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => handleTagClick(tag)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedTag === tag
+                    ? "bg-gray-900 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer links */}
+        <div className="text-xs text-gray-400 flex flex-wrap gap-2">
+          <span>Help</span>
+          <span>·</span>
+          <span>Status</span>
+          <span>·</span>
+          <span>About</span>
+          <span>·</span>
+          <span>Careers</span>
+          <span>·</span>
+          <span>Privacy</span>
+          <span>·</span>
+          <span>Terms</span>
+        </div>
+      </aside>
     </div>
   );
 }
