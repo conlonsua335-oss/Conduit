@@ -20,7 +20,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (async () => {
       try {
         const res = await getCurrentUserApi();
-        if (!cancelled) setUser(res.user);
+        if (!cancelled) {
+          console.log("user từ API: ", res.user)
+          return setUser(res.user);
+        }
+
       } catch {
         localStorage.removeItem("token");
         if (!cancelled) setUser(null);

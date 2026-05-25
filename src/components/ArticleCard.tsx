@@ -24,7 +24,7 @@ function ArticleCard({ article }: { article: Article }) {
         <div className="py-6 border-b border-gray-200 last:border-0">
             {/* Author info */}
             <div className="flex items-center gap-2 mb-3">
-                {article.author.image ? (
+                {article.author.image && article.author.image.trim() !== "" ? (
                     <img
                         src={article.author.image}
                         alt={article.author.username}

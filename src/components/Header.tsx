@@ -47,9 +47,12 @@ function Header() {
                 to={`/profile/${user.username}`}
                 className="flex items-center gap-2"
               >
-                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-bold">
+                <span style={{ fontSize: 10 }}>{user.image ?? "NULL"}</span>
+                {user.image ? (
+                  <img src={user.image} alt={user.username} className="w-8 h-8 rounded-full object-cover" />
+                ) : (<div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-bold">
                   {user.username[0].toUpperCase()}
-                </div>
+                </div>)}
               </Link>
 
               <button
