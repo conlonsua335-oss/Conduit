@@ -6,7 +6,7 @@ export type ApiError = {
 };
 
 function getToken(): string | null {
-  return sessionStorage.getItem("token");
+  return localStorage.getItem("token")
 }
 
 export async function apiRequest<T>(

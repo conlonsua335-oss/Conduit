@@ -5,53 +5,40 @@ import type { User } from "../types";
 
 
 function readToken(): string | null {
-  return sessionStorage.getItem("token");
+  return localStorage.getItem("token");
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const token = readToken();
-
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(() => Boolean(token));
-
-  console.log("AuthProvider render:", {
-    token: token,
-    user: user,
-    isLoading: isLoading
-  });
+  const [isLoading, setIsLoading] = useState<boolean>(() => Boolean(readToken()));
 
   useEffect(() => {
+    const token = readToken();
     if (!token) return;
-    if (user) return
     let cancelled = false;
 
     (async () => {
       try {
         const res = await getCurrentUserApi();
-        console.log("fetch xong:", res);
         if (!cancelled) setUser(res.user);
-      } catch (err) {
-        console.log("fetch lỗi:", err);
+      } catch {
         localStorage.removeItem("token");
         if (!cancelled) setUser(null);
       } finally {
-        console.log("finally, cancelled:", cancelled);
         if (!cancelled) setIsLoading(false);
       }
     })();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [token]);
+    return () => { cancelled = true; };
+  }, []);
 
   const login = useCallback((token: string, user: User) => {
-    sessionStorage.setItem("token", token);
+    localStorage.setItem("token", token);
     setUser(user);
   }, []);
 
   const logout = useCallback(() => {
-    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
     setUser(null);
   }, []);
 
@@ -65,4 +52,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-} 
+}
