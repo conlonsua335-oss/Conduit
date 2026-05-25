@@ -138,7 +138,7 @@ function ProfilePage() {
               : "text-gray-500 hover:text-gray-900"
               }`}
           >
-            My Articles
+            {isOwnProfile ? "My Articles" : "Aritcles"}
           </button>
           <button
             onClick={() => handleTabChange("favorited")}
