@@ -29,16 +29,22 @@ function HomePage() {
   const totalPages = Math.ceil(articlesCount / PAGE_SIZE);
 
   useEffect(() => {
-    getTags()
-      .then((res) => setTags(res.tags))
-      .catch(console.error)
-      .finally(() => setIsLoadingTags(false));
+    const fetchTags = async () => {
+      try {
+        const res = await getTags()
+        setTags(res.tags)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsLoadingTags(false)
+      }
+    }
+    fetchTags()
   }, []);
 
   useEffect(() => {
     let cancelled = false;
-
-    const fetch = async () => {
+    const fetchArticles = async () => {
       try {
         // const offset = (currentPage - 1) * PAGE_SIZE;
         const res = feedType === "your"
@@ -57,7 +63,7 @@ function HomePage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setArticles([]);
     setIsLoadingArticles(true);
-    fetch();
+    fetchArticles();
     return () => { cancelled = true; };
   }, [feedType, selectedTag, currentPage]);
 

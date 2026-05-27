@@ -1,244 +1,161 @@
-# Conduit — Real World Blogging Platform
+# 📰 Conduit — Medium Clone
 
-A Medium-inspired blogging platform built with React, TypeScript, and Tailwind CSS. This project implements the [RealWorld](https://github.com/gothinkster/realworld) spec and API.
-
----
-
-## Demo
-
-> Live API: `https://node-express-conduit.appspot.com/api`
+Ứng dụng blog platform clone theo thiết kế của [RealWorld](https://github.com/gothinkster/realworld), cho phép người dùng đăng bài viết, theo dõi tác giả, và tương tác với cộng đồng.
 
 ---
 
-## Tech Stack
+## Mô tả
 
-| Technology | Version | Purpose |
-|---|---|---|
-| React | 18 | UI Framework |
-| TypeScript | 5 | Type safety |
-| Vite | 5 | Build tool & dev server |
-| Tailwind CSS | 3 | Styling |
-| React Router | 6 | Client-side routing (HashRouter) |
-| react-markdown | 9 | Render article body as markdown |
+Conduit mô phỏng đầy đủ trải nghiệm của một nền tảng blog hiện đại:
+
+🧑‍💻 **Guest** → 📝 **Reader** → ✍️ **Author** → 💛 **Follower**
 
 ---
 
-## Features
+## Tính năng
 
-### Authentication
-- Register a new account
-- Login with email & password
-- Logout
-- Persist login state on page reload (sessionStorage)
-- Protected routes — redirect to login if not authenticated
-
-### Home Page
-- Global Feed — all articles
-- Your Feed — articles from followed authors (login required)
-- Filter articles by tag
-- Pagination (10 articles per page)
-- Tags sidebar
-
-### Articles
-- View article detail with markdown rendering
-- Create new article with tag input
-- Edit existing article (owner only)
-- Delete article (owner only)
-- Favorite / Unfavorite article
-
-### Comments
-- View all comments on an article
-- Add new comment (login required)
-- Delete own comment
-
-### Profile
-- View author profile with avatar and bio
-- My Articles tab
-- Favorited Articles tab
-- Follow / Unfollow author
-
-### Settings
-- Update avatar URL, username, bio, email
-- Change password
-- Logout from settings page
+| Trang | Chức năng |
+|---|---|
+| **HomePage** | Xem feed bài viết, lọc theo tag, phân trang, yêu thích bài viết |
+| **ArticlePage** | Đọc bài viết, comment, follow tác giả, favorite |
+| **Editor** | Tạo và chỉnh sửa bài viết (title, description, body, tags) |
+| **Profile** | Xem profile tác giả, danh sách bài viết & bài đã thích |
+| **Auth** | Đăng ký, đăng nhập, lưu session bằng JWT |
+| **Settings** | Cập nhật thông tin cá nhân, đổi password, đăng xuất |
 
 ---
 
-## Project Structure
+## Các tính năng đã hoàn thành
 
-```
-src/
-├── api/
-│   ├── client.ts        # Base API request handler (token, headers, errors)
-│   ├── auth.ts          # Login, register, getCurrentUser, updateUser
-│   ├── articles.ts      # CRUD articles, favorite, follow, comments
-│   └── tags.ts          # Get tags list
-├── components/
-│   ├── ArticleCard.tsx  # Article preview card
-│   ├── CommentCard.tsx  # Single comment
-│   ├── AddComment.tsx   # Add comment form
-│   ├── FavoriteButton.tsx
-│   ├── FollowButton.tsx
-│   ├── Pagination.tsx
-│   ├── Loading.tsx
-│   ├── ErrorMessage.tsx
-│   └── ProtectedRoute.tsx
-├── context/
-│   ├── auth-context.ts  # AuthState type + createContext
-│   ├── AuthProvider.tsx # Fetch user on load, login/logout logic
-│   └── useAuth.ts       # Hook to read AuthContext
-├── layouts/
-│   └── MainLayout.tsx   # Sidebar nav + header + outlet
-├── pages/
-│   ├── HomePage.tsx
-│   ├── LoginPage.tsx
-│   ├── RegisterPage.tsx
-│   ├── ArticlePage.tsx
-│   ├── EditorPage.tsx
-│   ├── ProfilePage.tsx
-│   ├── SettingsPage.tsx
-│   └── NotFoundPage.tsx
-├── types/
-│   └── index.ts         # User, Article, Comment, Profile, Tag types
-└── utils/
-    └── formatDate.ts    # Date formatting helper
-```
+### ✅ HomePage — Redesign & Bug Fixes
+
+- Redesign toàn bộ giao diện HomePage
+- Fix bug **"Show more / Show less" tags** — tags không render khi `showAllTags = true`
+- Fix bug **pagination** — page 2 trả về cùng data với page 1 (server dùng `page` thay vì `offset`)
+- Chuyển token storage từ `localStorage` → `sessionStorage` (phải đăng nhập lại mỗi session)
+- Logo click reset feed về tab "Featured" (`state={{ resetFeed: true }}` + `useEffect`)
+- **FavoriteButton** redirect về `/login` khi chưa xác thực (thay vì disabled)
+
+### ✅ ArticleCard — Redesign
+
+- Author avatar + username + date chuyển lên top row
+- Thumbnail image bên phải (picsum.photos seeded by slug)
+- Footer: FavoriteButton + comment count icon + tags
+- Comment count fetch live qua `GET /articles/:slug/comments` (hiển thị "..." khi loading)
+
+### ✅ ArticlePage — Full Redesign
+
+- Bỏ dark banner, thay bằng layout trắng sạch
+- Thêm thumbnail image (picsum.photos seeded by slug)
+- Description hiển thị bên dưới title
+- FollowButton đặt inline cạnh tên tác giả
+- Fix `isCommentsLoading` dùng đúng biến (trước đó dùng nhầm `isLoading`)
+
+### ✅ Header — Redesign
+
+- Sticky top với border
+- Nút "Write" có pencil icon
+- Avatar hiển thị chữ cái đầu của username
+- Nút "Get started" dạng pill cho unauthenticated users
+
+### ✅ FavoriteButton — Tạo lại từ đầu
+
+- Heart icon SVG, filled khi đã favorited
+- Toggle favorite/unfavorite qua API
+- Redirect `/login` nếu chưa xác thực
+- Thêm `favoriteArticle()` và `unfavoriteArticle()` vào `articles.ts`
 
 ---
 
-## Getting Started
+## Bug Fixes
 
-### Prerequisites
+| Bug | Nguyên nhân | Cách fix | Trạng thái |
+|---|---|---|---|
+| Unsplash image không load | `source.unsplash.com` đã deprecated | Chuyển sang `picsum.photos` với slug làm seed | ✅ Resolved |
+| FavoriteButton không hiển thị | File component bị xóa nhầm | Tạo lại `FavoriteButton.tsx` từ đầu | ✅ Resolved |
+| Tags "Show more" không render | Bug conditional rendering — thiếu `.map()` | Bọc điều kiện trong ngoặc: `(showAllTags ? tags : tags.slice(0, 20)).map(...)` | ✅ Resolved |
+| Page 2 trả về cùng data page 1 | Server không nhận `offset`, chỉ nhận `page` | Đổi `listArticles()` gửi `page` thay `offset` | ✅ Resolved |
+| Comment count không hiển thị | `GET /api/articles` không trả `commentCount` | Thêm `useEffect` trong `ArticleCard` gọi riêng `GET /articles/:slug/comments` | ✅ Resolved |
 
-- Node.js >= 18
-- npm >= 9
+---
 
-### Installation
+## Auth Flow
+
+JWT-based authentication với `sessionStorage`:
+
+- Token được ký bởi server và lưu tại client (`sessionStorage`)
+- Mỗi request tự động gắn header `Authorization: Token <jwt>`
+- Reload trang → vẫn còn đăng nhập
+- Đóng tab / đóng browser → phải đăng nhập lại
+- `AuthProvider` tự verify token khi mount — nếu server trả `401` thì xóa token và reset state
+
+---
+
+## Công nghệ
+
+| Layer | Tech |
+|---|---|
+| **Frontend** | React 18 + Vite |
+| **Language** | TypeScript |
+| **Styling** | CSS Modules / TailwindCSS |
+| **Routing** | React Router DOM v6 |
+| **Auth** | JWT + sessionStorage |
+| **API** | RealWorld Conduit API |
+
+---
+
+## Cài đặt & Chạy
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/conduit.git
-cd conduit
-
-# Install dependencies
+# Cài đặt dependencies
 npm install
-```
 
-### Environment Setup
-
-The project uses Vite proxy to avoid CORS issues in development. No `.env` file is needed — the proxy is configured in `vite.config.ts`:
-
-```ts
-server: {
-  proxy: {
-    "/api": {
-      target: "https://node-express-conduit.appspot.com",
-      changeOrigin: true,
-    },
-  },
-},
-```
-
-### Run Development Server
-
-```bash
+# Chạy development server
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Truy cập: [http://localhost:5173](http://localhost:5173)
 
-### Build for Production
+### Build Production
 
 ```bash
 npm run build
+npm run preview
 ```
 
 ---
 
-## Git Workflow
-
-Each User Story is developed on a separate branch and merged into `main` via Pull Request.
-
-```bash
-# Start a new US
-git checkout main
-git pull
-git checkout -b feature/US-xx-feature-name
-
-# After coding
-git add .
-git commit -m "US-xx: description"
-git push origin feature/US-xx-feature-name
-
-# Open PR on GitHub → merge → sync
-git checkout main
-git pull
-```
-
-### Commit Convention
+## Cấu trúc thư mục
 
 ```
-feat: add new feature
-fix:  fix a bug
-refactor: improve code without changing behavior
-style: UI changes only
+src/
+├── App.tsx                  # Root component + routing
+├── main.tsx                 # Entry point
+├── context/
+│   └── AuthProvider.tsx     # JWT auth context, sessionStorage
+├── api/
+│   ├── client.ts            # Axios instance + token injection
+│   ├── articles.ts          # Article CRUD + favorite/unfavorite
+│   ├── auth.ts              # Login, register, getCurrentUser
+│   └── comments.ts          # Comment CRUD
+├── pages/
+│   ├── HomePage.tsx         # Feed + tags + pagination
+│   ├── ArticlePage.tsx      # Article detail + comments
+│   ├── LoginPage.tsx        # Đăng nhập
+│   ├── RegisterPage.tsx     # Đăng ký
+│   ├── EditorPage.tsx       # Tạo / sửa bài viết
+│   ├── ProfilePage.tsx      # Profile tác giả
+│   └── SettingsPage.tsx     # Cài đặt tài khoản
+└── components/
+    ├── ArticleCard.tsx      # Card bài viết (thumbnail, favorite, comment count)
+    ├── FavoriteButton.tsx   # Heart button với API toggle
+    ├── FollowButton.tsx     # Follow/unfollow tác giả
+    └── Header.tsx           # Sticky header với avatar
 ```
 
 ---
 
-## User Stories Implemented
+## Tài liệu
 
-| US | Feature | Status |
-|---|---|---|
-| US-01 | Routing — HashRouter, 8 pages |  Done |
-| US-02 | Layout — Header, Footer, MainLayout |  Done |
-| US-03 | API Client — client.ts |  Done |
-| US-04 | TypeScript Types |  Done |
-| US-05 | AuthContext |  Done |
-| US-06 | Register |  Done |
-| US-07 | Login |  Done |
-| US-08 | Logout |  Done |
-| US-09 | Protected Routes |  Done |
-| US-11 | Home — Global Feed |  Done |
-| US-12 | Home — Tags Sidebar |  Done |
-| US-13 | Filter by Tag |  Done |
-| US-14 | Pagination |  Done |
-| US-15 | Your Feed |  Done |
-| US-16 | Article Preview Component |  Done |
-| US-17 | Article Detail Page |  Done |
-| US-18 | Markdown Render |  Done |
-| US-19 | Create Article |  Done |
-| US-20 | Edit Article |  Done |
-| US-21 | Delete Article |  Done |
-| US-22 | Follow / Unfollow Author |  Done |
-| US-23 | Load Comments |  Done |
-| US-24 | Add Comment |  Done |
-| US-25 | Delete Comment |  Done |
-| US-26 | Favorite Article |  Done |
-| US-27 | Follow User |  Done |
-| US-28 | Profile Info |  Done |
-| US-29 | Profile — My Articles |  Done |
-| US-30 | Profile — Favorited Articles |  Done |
-| US-31 | Settings — Load User |  Done |
-| US-32 | Settings — Update User |  Done |
-| US-33 | Error Handling |  Done |
-| US-34 | Loading State |  Done |
-| US-35 | Date Format |  Done |
-| US-36 | Responsive UI |  Done |
-| US-37 | Test Flows |  Done |
-| US-38 | Refactor Code |  Done |
-| US-39 | README |  Done |
-
----
-
-## Known Limitations
-
-- The public API server (`node-express-conduit.appspot.com`) is shared — may occasionally be slow or return rate limit errors
-- Image URLs from authors may be broken (handled with fallback to first letter avatar)
-- No real-time updates — page refresh required to see other users' new content
-
----
-
-## License
-
-MIT
+- [Sequence Diagrams — Auth Flow](./docs/auth-sequence.drawio)
+- [RealWorld API Spec](https://realworld-docs.netlify.app/docs/specs/backend-specs/introduction)
