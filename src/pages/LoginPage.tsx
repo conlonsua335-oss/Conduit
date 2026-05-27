@@ -32,7 +32,6 @@ function LoginPage() {
       const res = await loginApi(form.email, form.password)
       login(res.user.token, res.user)
       navigate("/")
-      console.log("sau khi login" + login)
     } catch (err: unknown) {
       setError(parseApiError(err))
     } finally {

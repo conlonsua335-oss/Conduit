@@ -2,28 +2,28 @@ import type { UpdateUserInput, UserResponse } from "../types"
 import { apiRequest } from "./client"
 
 export const getCurrentUserApi = () => {
-    return apiRequest<UserResponse>("/user")
+  return apiRequest<UserResponse>("/user")
 }
 
-export const loginApi = (email:string, password:string) => {
-    return apiRequest<UserResponse>("/users/login", {
-        method:"POST",
-        body: JSON.stringify({user: {email,password}})
-    })
+export const loginApi = (email: string, password: string) => {
+  return apiRequest<UserResponse>("/users/login", {
+    method: "POST",
+    body: JSON.stringify({ user: { email, password } })
+  })
 }
 
-export const registerApi = (username:string,email:string, password:string) => {
-    return apiRequest<UserResponse>("/users", {
-        method:"POST",
-        body: JSON.stringify({user: {username,email,password}})
-    })
+export const registerApi = (username: string, email: string, password: string) => {
+  return apiRequest<UserResponse>("/users", {
+    method: "POST",
+    body: JSON.stringify({ user: { username, email, password } })
+  })
 }
 
 export function parseApiError(err: unknown): string {
   try {
-    const apiErr = err as { 
-      status: number; 
-      data: { errors: Record<string, string | string[]> } 
+    const apiErr = err as {
+      status: number;
+      data: { errors: Record<string, string | string[]> }
     };
 
     if (apiErr.status === 401) return "You must be logged in to do this.";
@@ -45,8 +45,8 @@ export function parseApiError(err: unknown): string {
   }
 }
 
-export const updateUserApi = (data:UpdateUserInput) => 
-    apiRequest<UserResponse>("/user", {
-        method: "PUT",
-        body:JSON.stringify({user:data})
-    })
+export const updateUserApi = (data: UpdateUserInput) =>
+  apiRequest<UserResponse>("/user", {
+    method: "PUT",
+    body: JSON.stringify({ user: data })
+  })

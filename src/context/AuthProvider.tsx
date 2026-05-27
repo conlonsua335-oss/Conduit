@@ -5,7 +5,7 @@ import type { User } from "../types";
 
 
 function readToken(): string | null {
-  return localStorage.getItem("token");
+  return sessionStorage.getItem("token");
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -17,11 +17,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!token) return;
     let cancelled = false;
 
-    (async () => {
+    const fetchUser = async () => {
       try {
         const res = await getCurrentUserApi();
         if (!cancelled) {
-          console.log("user từ API: ", res.user)
           return setUser(res.user);
         }
 
@@ -31,18 +30,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } finally {
         if (!cancelled) setIsLoading(false);
       }
-    })();
-
+    };
+    fetchUser()
     return () => { cancelled = true; };
   }, []);
 
   const login = useCallback((token: string, user: User) => {
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("token", token);
     setUser(user);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setUser(null);
   }, []);
 
