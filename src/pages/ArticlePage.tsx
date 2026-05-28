@@ -74,6 +74,10 @@ function ArticlePage() {
     }
   };
 
+  const handleEditComment = (newComment: Comment) => {
+    setComments((prev) => [newComment, ...prev])
+  }
+
   const handleCommentAdded = (comment: Comment) => {
     setComments((prev) => [comment, ...prev]);
   };
@@ -209,6 +213,7 @@ function ArticlePage() {
                 comment={comment}
                 slug={article.slug}
                 onDeleted={handleCommentDeleted}
+                onEdited={handleEditComment}
               />
             ))}
           </div>

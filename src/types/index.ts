@@ -79,6 +79,7 @@ export type CommentCardProps = {
   comment: Comment;
   slug: string;
   onDeleted: (commentId: number) => void;
+  onEdited: (updated: Comment) => void
 }
 
 export type AddCommentProps = {
