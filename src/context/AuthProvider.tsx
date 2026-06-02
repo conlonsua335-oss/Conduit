@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
       } catch {
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         if (!cancelled) setUser(null);
       } finally {
         if (!cancelled) setIsLoading(false);

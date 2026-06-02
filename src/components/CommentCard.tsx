@@ -3,14 +3,8 @@ import { Link } from "react-router-dom";
 import { deleteComment, addComment } from "../api/articles";
 import { useAuth } from "../context/useAuth";
 import { formatDate } from "../types/formatDate";
-import type { Comment } from "../types";
+import type { CommentCardProps } from "../types";
 
-type CommentCardProps = {
-    comment: Comment;
-    slug: string;
-    onDeleted: (id: number) => void;
-    onEdited: (updated: Comment) => void;
-};
 
 function CommentCard({ comment, slug, onDeleted, onEdited }: CommentCardProps) {
     const { user } = useAuth();
@@ -33,7 +27,7 @@ function CommentCard({ comment, slug, onDeleted, onEdited }: CommentCardProps) {
     };
 
     const handleSave = async () => {
-        if (!editBody.trim()) return;
+        if (!editBody.trim()) return; // nếu nội dung sau khi xóa khoảng trắng mà rỗng -> thì thoát luôn, không làm gì tiếp
         setIsSaving(true);
         try {
             // xóa cmt cũ
@@ -125,7 +119,7 @@ function CommentCard({ comment, slug, onDeleted, onEdited }: CommentCardProps) {
                                     disabled={isDeleting}
                                     className="text-red-400 hover:text-red-600 text-xs disabled:opacity-50"
                                 >
-                                    {isDeleting ? "Deleting..." : "🗑️ Delete"}
+                                    {isDeleting ? "Deleting..." : "Delete"}
                                 </button>
                             </>
                         )}
