@@ -20,16 +20,17 @@ function RegisterPage() {
     setError("");
 
     if (!form.username || !form.email || !form.password) {
-      setError("Vui lòng nhập đầy đủ thông tin")
+      setError("please fill in all fields.");
       return
     }
     setIsLoading(true);
 
     try {
       await registerApi(form.username, form.email, form.password);
+      alert("successfully registered! Please login.");
       navigate("/login");
     } catch (err: unknown) {
-      console.log("Lỗi:", err);
+      console.log("bug:", err);
       setError(parseApiError(err));
     } finally {
       setIsLoading(false);

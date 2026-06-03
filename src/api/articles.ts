@@ -13,9 +13,9 @@ export const listArticles = (
     `/articles?limit=${limit}&page=${page}${tag ? `&tag=${tag}` : ""}${author ? `&author=${author}` : ""}${favorited ? `&favorited=${favorited}` : ""}`
   );
 
-export const feedArticles = (limit = 10, offset = 0) =>
+export const feedArticles = (limit = 10, page = 1) =>
   apiRequest<ArticlesResponse>(
-    `/articles/feed?limit=${limit}&offset=${offset}`
+    `/articles/feed?limit=${limit}&page=${(page-1)*limit}`
   );
 
 export const getArticle = (slug: string) =>

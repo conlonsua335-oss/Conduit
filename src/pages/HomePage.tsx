@@ -7,7 +7,7 @@ import Pagination from "../components/Pagination";
 import Loading from "../components/Loading";
 import type { Article } from "../types";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 type FeedType = "global" | "your";
 
 function HomePage() {
