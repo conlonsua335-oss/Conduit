@@ -147,7 +147,7 @@ function HomePage() {
           ) : (
             <>
               <div className="flex flex-wrap gap-2">
-                {(showAllTags ? tags : tags.slice(0, 20)).map((tag) => (
+                {(showAllTags ? tags : tags.slice(0, 20)).filter((tag) => tag !== null && tag !== "").map((tag) => (
                   <button
                     key={tag}
                     onClick={() => handleTagClick(tag)}
