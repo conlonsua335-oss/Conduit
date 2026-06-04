@@ -16,22 +16,50 @@ function RegisterPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof typeof form, string>>>({});
+
   const handleSubmit = async () => {
     setError("");
+    setFieldErrors({})
 
-    if (!form.username || !form.email || !form.password) {
-      setError("please fill in all fields.");
+    const errors: Partial<Record<"username" | "email" | "password", string>> = {}
+    if (!form.username) errors.username = "Username is required."
+    if (!form.email) errors.email = "Email is required."
+    if (!form.password) errors.password = "Password is required."
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       return
     }
     setIsLoading(true);
 
     try {
       await registerApi(form.username, form.email, form.password);
-      alert("successfully registered! Please login.");
-      navigate("/login");
+      const goToLogin = window.confirm(
+        "Registration successful! \n\nDo you want to go to Login page?"
+      )
+      if (goToLogin) {
+        navigate("/login")
+      } else {
+        navigate("/register")
+      }
     } catch (err: unknown) {
-      console.log("bug:", err);
-      setError(parseApiError(err));
+      const apiErr = err as { status: number; data: { errors: Record<string, string | string[]> } }
+      if (apiErr.status === 422 && apiErr.data?.errors) {
+        const serverErrors: Partial<Record<"username" | "email" | "password", string>> = {}
+        Object.entries(apiErr.data.errors).forEach(([field, errs]) => {
+          const msg = Array.isArray(errs) ? errs.join(", ") : errs
+          if (field === "username") serverErrors.username = `Username ${msg}`
+          if (field === "email") serverErrors.email = `Email ${msg}`
+          if (field === "password") serverErrors.password = `Password ${msg}`
+        })
+        if (Object.keys(serverErrors).length > 0) {
+          setFieldErrors(serverErrors)
+        } else {
+          setError(parseApiError(err))
+        }
+      } else {
+        setError(parseApiError(err))
+      }
     } finally {
       setIsLoading(false);
     }
@@ -55,6 +83,7 @@ function RegisterPage() {
         onSubmit={handleSubmit}
         isLoading={isLoading}
         buttonText="Sign up"
+        fieldErrors={fieldErrors}
       />
 
     </div>

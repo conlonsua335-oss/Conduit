@@ -63,6 +63,7 @@ export type FieldProps = {
   type: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  hasError?: boolean;
 }
 
 export type ButtonProps = {

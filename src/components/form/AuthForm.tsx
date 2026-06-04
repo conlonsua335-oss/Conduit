@@ -13,6 +13,7 @@ type Props<T> = {
     onSubmit: () => void
     isLoading?: boolean
     buttonText: string
+    fieldErrors?: Partial<Record<keyof T, string>>
 }
 
 export default function AuthForm<T extends Record<string, string>>({
@@ -22,22 +23,32 @@ export default function AuthForm<T extends Record<string, string>>({
     onSubmit,
     isLoading,
     buttonText,
+    fieldErrors = {}
 }: Props<T>) {
     return (
         <div className="flex flex-col gap-4">
             {fields.map((field) => (
-                <InputField
-                    key={String(field.name)}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    value={form[field.name] || ""}
-                    onChange={(e) =>
-                        setForm({
-                            ...form,
-                            [field.name]: e.target.value,
-                        })
-                    }
-                />
+                <div key={String(field.name)} className="flex flex-col gap-1">
+                    <InputField
+                        key={String(field.name)}
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        value={form[field.name] || ""}
+                        onChange={(e) =>
+                            setForm({
+                                ...form,
+                                [field.name]: e.target.value,
+                            })
+                        }
+                        hasError={!!fieldErrors[field.name]}
+                    />
+                    {fieldErrors[field.name] && (
+                        <p className="text-red-500 text-xs px-1">
+                            {fieldErrors[field.name]}
+                        </p>
+                    )}
+                </div>
+
             ))}
 
             <button
@@ -45,7 +56,7 @@ export default function AuthForm<T extends Record<string, string>>({
                 disabled={isLoading}
                 className="bg-green-500 text-white px-6 py-3 rounded text-lg self-end hover:bg-green-600 disabled:opacity-50"
             >
-                {isLoading ? "Đang xử lý..." : buttonText}
+                {isLoading ? "On Processing..." : buttonText}
             </button>
         </div>
     )
