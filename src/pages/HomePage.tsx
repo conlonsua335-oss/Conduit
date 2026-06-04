@@ -26,6 +26,8 @@ function HomePage() {
 
   const [showAllTags, setShowAlltags] = useState(false)
 
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest")
+
   const totalPages = Math.ceil(articlesCount / PAGE_SIZE);
 
   useEffect(() => {
@@ -51,7 +53,11 @@ function HomePage() {
           ? await feedArticles(PAGE_SIZE, currentPage)
           : await listArticles(PAGE_SIZE, currentPage, selectedTag ?? undefined);
         if (!cancelled) {
-          setArticles(res.articles);
+          const sorted = [...res.articles].sort((a, b) => {
+            const diff = new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            return sortOrder === "newest" ? diff : -diff;
+          });
+          setArticles(sorted);
           setArticlesCount(res.articlesCount);
           setIsLoadingArticles(false);
         }
@@ -65,7 +71,7 @@ function HomePage() {
     setIsLoadingArticles(true);
     fetchArticles();
     return () => { cancelled = true; };
-  }, [feedType, selectedTag, currentPage]);
+  }, [feedType, selectedTag, currentPage, sortOrder]);
 
   const handleTagClick = (tag: string) => {
     setSelectedTag((prev) => (prev === tag ? null : tag));
@@ -114,6 +120,19 @@ function HomePage() {
 
         {/* Articles */}
         {isLoadingArticles && <Loading />}
+
+        {/* Sort button */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setSortOrder(prev => prev === "newest" ? "oldest" : "newest")}
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+            </svg>
+            {sortOrder === "newest" ? "Newest first" : "Oldest first"}
+          </button>
+        </div>
 
         {!isLoadingArticles && articles.length === 0 && (
           <p className="text-gray-400 text-center py-20">
